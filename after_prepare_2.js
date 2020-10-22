@@ -9,9 +9,6 @@ const child_process = require('child_process');
 const execSync = child_process.execSync;
 
 
-const ARCH_TYPES = ['i386', 'x86_64', 'armv7', 'arm64'];
-
-
 function list(dir) {
 	// List WebRTC architectures
 	console.log('List WebRTC architectures...');
@@ -31,18 +28,22 @@ module.exports = function(ctx) {
 	console.log('List WebRTC files...');
 	console.log(execSync('ls -ahl | grep WebRTC', {cwd: dir}).toString().trim());
 
+	console.log(execSync(`lipo -info "WebRTC"`, {cwd: dir}).toString().trim());
+
+	console.log('Remove i386...');
 	execSync(`lipo -output "WebRTC-tmp" -remove "i386" "WebRTC"`, {cwd: dir});
 	execSync(`rm "WebRTC"`, {cwd: dir});
 	execSync(`mv "WebRTC-tmp" "WebRTC"`, {cwd: dir});
 
+	console.log('Remove x86_64...');
 	execSync(`lipo -output "WebRTC-tmp" -remove "x86_64" "WebRTC"`, {cwd: dir});
 	execSync(`rm "WebRTC"`, {cwd: dir});
 	execSync(`mv "WebRTC-tmp" "WebRTC"`, {cwd: dir});
 
-	console.log(execSync(`lipo -info "WebRTC"`, {cwd: dir}).toString().trim());
-
 	console.log('List WebRTC files...');
 	console.log(execSync('ls -ahl | grep WebRTC', {cwd: dir}).toString().trim());
+
+	console.log(execSync(`lipo -info "WebRTC"`, {cwd: dir}).toString().trim());
 
 	list(dir);
 
